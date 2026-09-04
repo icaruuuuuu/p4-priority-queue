@@ -4,5 +4,19 @@ def orchestrate(nodes_dict, duration):
     Nodes are called via nodes_dict['node_name']. Use the .cmd method to call bash commands.
     e.g.: nodes_dict['h1'].cmd(f"bash -c 'scripts/custom-script.sh {duration}'")
     """
+    """
+    Insert custom orchestration here.
+    Nodes are called via nodes_dict['node_name']. Use the .cmd method to call bash commands.
+    e.g.: nodes_dict['h1'].cmd(f"bash -c 'scripts/custom-script.sh {duration}'")
+    """
+    h1, h2 = nodes_dict['h1'], nodes_dict['h2']
+    h1.cmd("ethtool -K h1-eth0 tx off rx off")
+    h2.cmd("ethtool -K h2-eth0 tx off rx off")
+    
+    h1.cmd("tc qdisc add dev h1-eth0 root tbf rate 10mbit burst 32kbit latency 30ms 2> /tmp/tc.err")
+
+    h2.cmd("service vsftpd start; iperf3 -sD; nginx -g 'daemon off;' &")
+    h1.cmd("tcpdump -i h1-eth0 -s0 -w /tmp/dump-$(date +'%Y%m%d_%H%M%S').pcap &")
+    h1.cmd(f"scripts/consume.sh {duration} &")
 
     return
