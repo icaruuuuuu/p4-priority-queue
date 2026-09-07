@@ -40,7 +40,7 @@ consume_video() {
 }
 
 consume_iperf() {
-	iperf3 -c $SERVER -t 0 --json --logfile "$IPERF_LOG -l 500"
+	iperf3 -c $SERVER -t 0 --json --logfile "$IPERF_LOG" -l 1400
 }
 
 cleanup() {

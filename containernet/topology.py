@@ -57,8 +57,9 @@ def main():
     post_init(nodes_dict)
 
     info('*** Starting Mininet CLI\n')
-    CLI(net)
+    # CLI(net)
     sleep(duration)
+    info(f'*** Sleeping for {duration} seconds')
 
     info('*** Stopping the network\n')
     net.stop()

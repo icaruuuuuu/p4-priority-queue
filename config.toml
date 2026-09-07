@@ -1,10 +1,9 @@
 [ml]
-model = "decision_tree"
+model = "xgboost_binary"
 features = ["tos", "window", "frame_size", "ipi"]
 
 # Optional model parameters
 [ml.parameters]
-max_depth = 10
 
 
 
