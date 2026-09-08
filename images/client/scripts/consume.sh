@@ -40,12 +40,13 @@ consume_video() {
 }
 
 consume_iperf() {
-	iperf3 -c $SERVER -t 0 --json --logfile "$IPERF_LOG" -l 1400
+	iperf3 -c $SERVER -t $DURATION -i 1 --json --logfile "$IPERF_LOG" -l 500
 }
 
 cleanup() {
     echo -e "\nEncerrando todos os geradores de tráfego..."
-    pkill -P $$ 2>/dev/null
+    pkill -INT -P $$ 2>/dev/null
+    sleep 1
     exit 0
 }
 

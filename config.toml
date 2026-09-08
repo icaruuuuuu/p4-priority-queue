@@ -15,7 +15,8 @@ links = [
 
 [[provision.nodes]]
 name = "s1"
-type = "switch"
+type = "bmv2"
+source = "xgboost_binary"
 
 [[provision.nodes]]
 name = "h1"
