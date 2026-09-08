@@ -41,7 +41,7 @@ def post_init(nodes_dict):
     if_args = " ".join([f"-i {idx}@{intf}" for idx, intf in enumerate(interfaces)])
     
     info('--> Starting simple_switch for s1...\n')
-    bmv2_node.cmd(f'simple_switch {if_args} {json_output} -- --priority-queues 8 2> /tmp/bmv2.err &')
+    bmv2_node.cmd(f'simple_switch {if_args} {json_output} -- --priority-queues 2 2> /tmp/bmv2.err &')
     
 
     orchestrate(nodes_dict, duration)

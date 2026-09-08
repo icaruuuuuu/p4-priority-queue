@@ -25,7 +25,7 @@ def orchestrate(nodes_dict, duration):
     s1.cmd("ip link set s1-eth0 up")
     s1.cmd("ip link set s1-eth1 up")
     s1.cmd('cat /tmp/compile/ipv4lpm.txt | simple_switch_CLI')
-    # s1.cmd('cat /tmp/compile/table.txt | simple_switch_CLI')
+    s1.cmd('cat /tmp/compile/table.txt | simple_switch_CLI')
 
     h2.cmd("service vsftpd start; iperf3 -sD; nginx -g 'daemon off;' &")
     h1.cmd("tcpdump -i h1-eth0 -s0 -w /tmp/dump-$(date +'%Y%m%d_%H%M%S').pcap &")

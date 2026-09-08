@@ -1759,6 +1759,12 @@ control MyIngress(inout headers hdr,
                 tree99_exact.apply();
                 apply_threshold.apply();
                 resultCounter.count((bit<32>)meta.result);
+
+                if (meta.result == 1) {
+                    standard_metadata.priority = 1;
+                } else {
+                    standard_metadata.priority = 0;
+                }
             }
 
             ipv4_lpm.apply();
