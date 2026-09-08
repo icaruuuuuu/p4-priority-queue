@@ -1,0 +1,10 @@
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: MyIngress.resultCounter[0]= (185049521 bytes, 172547 packets)
+RuntimeCmd: 
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: MyIngress.resultCounter[1]= (230434881 bytes, 278563 packets)
+RuntimeCmd: 

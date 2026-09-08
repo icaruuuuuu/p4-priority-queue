@@ -30,8 +30,8 @@ def post_init(nodes_dict):
     
     bmv2_node = nodes_dict['s1']
     
-    p4_source = "/tmp/compile/decision_tree.p4"
-    json_output = "decision_tree.json"
+    p4_source = "/tmp/compile/xgboost_binary.p4"
+    json_output = "xgboost_binary.json"
     
     info('--> Compiling P4 for s1...\n')
     bmv2_node.cmd(f'p4c --target bmv2 --arch v1model {p4_source}')
@@ -73,7 +73,7 @@ def main():
 
     info('*** Starting Mininet CLI\n')
     # CLI(net)
-    sleep(2)
+    sleep(duration + 2)
 
     info('*** Stopping the network\n')
     net.stop()

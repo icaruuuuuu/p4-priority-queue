@@ -102,7 +102,7 @@ struct metadata {
     bit<14> action_select3;
     bit<48> ipi;
     bit<14> action_select4;
-    bit<32> xgb_score; 
+    bit<64> xgb_score; 
     bit<3>  result;
 }
 
@@ -276,7 +276,7 @@ control MyIngress(inout headers hdr,
 // XGBOOST BINARY CLASSIFIER //
 // ************************* //
 
-    action add_tree_weight(bit<32> scaled_weight) {
+    action add_tree_weight(bit<64> scaled_weight) {
         meta.xgb_score = meta.xgb_score + scaled_weight;
     }
 

@@ -14,8 +14,8 @@ def orchestrate(nodes_dict, duration):
     h1.cmd("arp -s 10.0.0.2 00:00:01:00:00:01")
     h2.cmd("arp -s 10.0.0.1 00:00:01:00:00:02")
 
-    h1.cmd("sysctl -w net.ipv4.tcp_timestamps=0")
-    h1.cmd("sysctl -w net.ipv4.tcp_window_scaling=0")
+    # h1.cmd("sysctl -w net.ipv4.tcp_timestamps=0")
+    # h1.cmd("sysctl -w net.ipv4.tcp_window_scaling=0")
 
     h1.cmd("ethtool -K h1-eth0 tx off rx off")
     h2.cmd("ethtool -K h2-eth0 tx off rx off")
@@ -29,6 +29,9 @@ def orchestrate(nodes_dict, duration):
 
     h2.cmd("service vsftpd start; iperf3 -sD; nginx -g 'daemon off;' &")
     h1.cmd("tcpdump -i h1-eth0 -s0 -w /tmp/dump-$(date +'%Y%m%d_%H%M%S').pcap &")
-    h1.cmd(f"scripts/consume.sh {duration} &")
+    h1.cmd(f"scripts/consume.sh {duration}")
+
+    nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 0" | simple_switch_CLI > /tmp/class')
+    nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 1" | simple_switch_CLI >> /tmp/class')
 
     return
