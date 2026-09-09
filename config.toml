@@ -9,14 +9,18 @@ features = ["tos", "window", "frame_size", "ipi"]
 
 [provision]
 links = [
-	["s1", "h1"],
-	["s1", "h2"],
+	["s2", "h1"],
+	["s2", "h2"],
 ]
 
 [[provision.nodes]]
 name = "s1"
 type = "bmv2"
 source = "decision_tree"
+
+[[provision.nodes]]
+name = "s2"
+type = "switch"
 
 [[provision.nodes]]
 name = "h1"

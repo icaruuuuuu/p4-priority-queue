@@ -17,17 +17,19 @@ FILE_LOG="$LOG_DIR/file-$TIMESTAMP.csv"
 IPERF_LOG="$LOG_DIR/iperf-$TIMESTAMP.json"
 
 consume_web() {
-    echo "http_status,time_total" > "$WEB_LOG"
+    echo "timestamp,http_status,time_total" > "$WEB_LOG"
     while true; do
-        curl -so /dev/null "$WEB_URL" -w "%{http_code},%{time_total}\n" >> "$WEB_LOG" || true
+	TS=$(date +%s.%3N)
+        curl -so /dev/null "$WEB_URL" -w "$TS,%{http_code},%{time_total}\n" >> "$WEB_LOG" || true
         sleep 1
     done
 }
 
 consume_file() {
-    echo "time_total" > "$FILE_LOG"
+    echo "timestamp,time_total" > "$FILE_LOG"
     while true; do
-        curl -so /dev/null -u "$FTP_USER:$FTP_PASS" "$FILE_URL" -w "%{time_total}\n" >> "$FILE_LOG" || true
+	TS=$(date +%s.%3N)
+        curl -so /dev/null -u "$FTP_USER:$FTP_PASS" "$FILE_URL" -w "$TS,%{time_total}\n" >> "$FILE_LOG" || true
         sleep 1
     done
 }

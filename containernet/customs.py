@@ -14,8 +14,8 @@ def orchestrate(nodes_dict, duration):
     h1.cmd("arp -s 10.0.0.2 00:00:01:00:00:01")
     h2.cmd("arp -s 10.0.0.1 00:00:01:00:00:02")
 
-    # h1.cmd("sysctl -w net.ipv4.tcp_timestamps=0")
-    # h1.cmd("sysctl -w net.ipv4.tcp_window_scaling=0")
+    h1.cmd("sysctl -w net.ipv4.tcp_timestamps=0")
+    h1.cmd("sysctl -w net.ipv4.tcp_window_scaling=0")
 
     h1.cmd("ethtool -K h1-eth0 tx off rx off")
     h2.cmd("ethtool -K h2-eth0 tx off rx off")
