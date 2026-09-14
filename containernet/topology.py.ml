@@ -14,7 +14,7 @@ def create_nodes(net):
 
     info('*** Adding Network Nodes (Switches and Docker Containers)\n')
     
-    nodes_dict['s1'] = net.addDocker('s1', dimage='inetrm-bmv2', ip='10.0.0.254', network_mode='none', volumes=["/tmp:/tmp"])
+    nodes_dict['s1'] = net.addDocker('s1', dimage='inetrm-bmv2', ip='none', network_mode='none', volumes=["/tmp:/tmp"])
     nodes_dict['h1'] = net.addDocker('h1', dimage='inetrm-client', ip='10.0.0.1', mac='00:00:00:00:00:01', network_mode='none', volumes=["/tmp:/tmp"])
     nodes_dict['h2'] = net.addDocker('h2', dimage='inetrm-server', ip='10.0.0.2', mac='00:00:00:00:00:02', network_mode='none', volumes=["/tmp:/tmp"])
 

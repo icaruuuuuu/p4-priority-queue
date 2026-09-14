@@ -14,7 +14,7 @@ def create_nodes(net):
 
     info('*** Adding Network Nodes (Switches and Docker Containers)\n')
     
-    nodes_dict['s1'] = net.addDocker('s1', dimage='inetrm-bmv2', ip='10.0.0.254', network_mode='none', volumes=["/tmp:/tmp"])
+    nodes_dict['s1'] = net.addDocker('s1', dimage='inetrm-bmv2', ip='none', network_mode='none', volumes=["/tmp:/tmp"])
     nodes_dict['h1'] = net.addDocker('h1', dimage='inetrm-client', ip='10.0.0.1', mac='00:00:00:00:00:01', network_mode='none', volumes=["/tmp:/tmp"])
     nodes_dict['h2'] = net.addDocker('h2', dimage='inetrm-server', ip='10.0.0.2', mac='00:00:00:00:00:02', network_mode='none', volumes=["/tmp:/tmp"])
 
@@ -34,14 +34,14 @@ def post_init(nodes_dict):
     json_output = "decision_tree.json"
     
     info('--> Compiling P4 for s1...\n')
-    bmv2_node.cmd(f'p4c --target bmv2 --arch v1model {p4_source}')
+    bmv2_node.cmd(f'p4c --target bmv2 --arch v1model {p4_source} 2> /tmp/bmv2.err')
     
     interfaces = [intf for intf in bmv2_node.intfNames() if intf != 'lo']
     
     if_args = " ".join([f"-i {idx}@{intf}" for idx, intf in enumerate(interfaces)])
     
     info('--> Starting simple_switch for s1...\n')
-    bmv2_node.cmd(f'simple_switch {if_args} {json_output} -- --priority-queues 2 2> /tmp/bmv2.err &')
+    bmv2_node.cmd(f'simple_switch {if_args} {json_output} -- --priority-queues 2 >> /tmp/bmv2.err &')
     
 
     orchestrate(nodes_dict, duration)

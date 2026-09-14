@@ -94,14 +94,10 @@ struct metadata {
     ingress_metadata_t   ingress_metadata;
     parser_metadata_t   parser_metadata;
     flowID_t flowID;
-    bit<8> diffserv;
+    bit<16> srcPort;
     bit<14> action_select1;
-    bit<16> window;
+    bit<16> dstPort;
     bit<14> action_select2;
-    bit<32> frame_size;
-    bit<14> action_select3;
-    bit<48> ipi;
-    bit<14> action_select4;
     bit<3>  result;
 }
 
@@ -220,7 +216,7 @@ control MyIngress(inout headers hdr,
 
     table feature1_exact {
         key = {
-            meta.diffserv: range ;
+            meta.srcPort: range ;
         }
         actions = {
             NoAction;
@@ -234,39 +230,11 @@ control MyIngress(inout headers hdr,
 
     table feature2_exact {
         key = {
-            meta.window: range ;
+            meta.dstPort: range ;
         }
         actions = {
             NoAction;
             set_actionselect2;
-        }
-        size = 1024;
-    }
-    action set_actionselect3(bit<14> featurevalue3) {
-        meta.action_select3 = featurevalue3;
-    }
-
-    table feature3_exact {
-        key = {
-            meta.frame_size: range ;
-        }
-        actions = {
-            NoAction;
-            set_actionselect3;
-        }
-        size = 1024;
-    }
-    action set_actionselect4(bit<14> featurevalue4) {
-        meta.action_select4 = featurevalue4;
-    }
-
-    table feature4_exact {
-        key = {
-            meta.ipi: range ;
-        }
-        actions = {
-            NoAction;
-            set_actionselect4;
         }
         size = 1024;
     }
@@ -279,8 +247,6 @@ control MyIngress(inout headers hdr,
         key = {
             meta.action_select1: range ;
             meta.action_select2: range ;
-            meta.action_select3: range ;
-            meta.action_select4: range ;
         }
         actions = {
             set_result;
@@ -290,30 +256,8 @@ control MyIngress(inout headers hdr,
     }
 
     action extract_features() {
-        meta.diffserv = hdr.ipv4.diffserv;
-        meta.window = hdr.tcp.window;
-        meta.frame_size = standard_metadata.packet_length;
-        timestamp_t ipi = 0;
-        int<48> diff_ts = 0;
-
-        timestamp_t current_time = standard_metadata.ingress_global_timestamp;
-        timestamp_t last_packet_time = 0;
-
-        ipi_register.read(ipi, (bit<32>)meta.flowID);
-        lpt_register.read(last_packet_time, (bit<32>)meta.flowID);
-
-        if (last_packet_time == 0) {
-            last_packet_time = current_time;
-        } else {
-            /* IPI */
-            ipi = current_time - last_packet_time;
-            last_packet_time = current_time;
-        }
-
-        ipi_register.write((bit<32>)meta.flowID, ipi);
-        lpt_register.write((bit<32>)meta.flowID, last_packet_time);
-
-        meta.ipi = ipi;
+        meta.srcPort = hdr.tcp.srcPort;
+        meta.dstPort = hdr.tcp.dstPort;
     }
 
     action ipv4_forward(macAddr_v dstAddr, egressSpec_v port) {
@@ -338,25 +282,19 @@ control MyIngress(inout headers hdr,
 
     apply {
         meta.flowID = 0;
+        standard_metadata.priority = 0;
         if (hdr.ipv4.isValid()) {
-            if (hdr.tcp.isValid() && !hdr.nodeCount.isValid() && hdr.tcp.srcPort != 5201 && hdr.tcp.dstPort != 5201) {
+            if (hdr.tcp.isValid() && !hdr.nodeCount.isValid()) {
                 find_flowID_ipv4();
                 extract_features();
 
                 feature1_exact.apply();
                 feature2_exact.apply();
-                feature3_exact.apply();
-                feature4_exact.apply();
 
                 classify_exact.apply();
                 resultCounter.count((bit<32>)meta.result);
+                standard_metadata.priority = meta.result;
             }
-		
-	    if (meta.result == 1) {
-		standard_metadata.priority = 1;
-	    } else {
-		standard_metadata.priority = 0;
-	    }
 
             ipv4_lpm.apply();
         }

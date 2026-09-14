@@ -24,11 +24,17 @@ def orchestrate(nodes_dict, duration):
 
     s1.cmd("ip link set s1-eth0 up")
     s1.cmd("ip link set s1-eth1 up")
-    s1.cmd('cat /tmp/compile/ipv4lpm.txt | simple_switch_CLI')
-    # s1.cmd('cat /tmp/compile/table.txt | simple_switch_CLI')
+
+    s1.cmd('cat /tmp/compile/ipv4lpm.txt | simple_switch_CLI > /tmp/cli.err')
+    s1.cmd('echo "\n\nSPACING\n\n" >> /tmp/cli.err')
+    s1.cmd('cat /tmp/compile/table.txt | simple_switch_CLI >> /tmp/cli.err')
 
     h2.cmd("service vsftpd start; iperf3 -sD; nginx -g 'daemon off;' &")
     h1.cmd("tcpdump -i h1-eth0 -s0 -w /tmp/dump-$(date +'%Y%m%d_%H%M%S').pcap &")
+
+    s1.cmd("tcpdump -i s1-eth0 -s0 -w /tmp/dump-bmv2-eth0-$(date +'%Y%m%d_%H%M%S').pcap & 2>>/tmp/bmv2.err")
+    s1.cmd("tcpdump -i s1-eth1 -s0 -w /tmp/dump-bmv2-eth1-$(date +'%Y%m%d_%H%M%S').pcap & 2>>/tmp/bmv2.err")
+
     h1.cmd(f"scripts/consume.sh {duration}")
 
     nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 0" | simple_switch_CLI > /tmp/class')
