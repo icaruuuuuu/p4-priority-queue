@@ -282,6 +282,7 @@ control MyIngress(inout headers hdr,
 
     apply {
         meta.flowID = 0;
+        meta.result = 0;
         standard_metadata.priority = 0;
         if (hdr.ipv4.isValid()) {
             if (hdr.tcp.isValid() && !hdr.nodeCount.isValid()) {

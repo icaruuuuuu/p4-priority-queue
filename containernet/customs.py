@@ -25,7 +25,10 @@ def orchestrate(nodes_dict, duration):
     s1.cmd("ip link set s1-eth0 up")
     s1.cmd("ip link set s1-eth1 up")
 
-    s1.cmd('cat /tmp/compile/ipv4lpm.txt | simple_switch_CLI > /tmp/cli.err')
+    s1.cmd('echo " " > /tmp/cli.err')
+
+    s1.cmd('echo "set_queue_rate 500 1 0" | simple_switch_CLI >> /tmp/cli.err')
+    s1.cmd('cat /tmp/compile/ipv4lpm.txt | simple_switch_CLI >> /tmp/cli.err')
     s1.cmd('echo "\n\nSPACING\n\n" >> /tmp/cli.err')
     s1.cmd('cat /tmp/compile/table.txt | simple_switch_CLI >> /tmp/cli.err')
 

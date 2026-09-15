@@ -215,7 +215,12 @@ control MyIngress(inout headers hdr,
     apply {
         meta.flowID = 0;
         if (hdr.ipv4.isValid()) {
-            standard_metadata.priority = 1;
+	    if (hdr.tcp.dstPort == 5201 || hdr.tcp.srcPort == 5201) {
+		standard_metadata.priority = 0;
+	    } else {
+	    	standard_metadata.priority = 1;
+	    }
+
             ipv4_lpm.apply();
         }
     }

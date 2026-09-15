@@ -39,9 +39,11 @@ def post_init(nodes_dict):
     interfaces = [intf for intf in bmv2_node.intfNames() if intf != 'lo']
     
     if_args = " ".join([f"-i {idx}@{intf}" for idx, intf in enumerate(interfaces)])
-    
+
+    bmv2_node.cmd("ip link set s1-eth0 up")
+    bmv2_node.cmd("ip link set s1-eth1 up")
     info('--> Starting simple_switch for s1...\n')
-    bmv2_node.cmd(f'simple_switch {if_args} {json_output} -- --priority-queues 2 >> /tmp/bmv2.err &')
+    bmv2_node.cmd(f'simple_switch {if_args} {json_output} --log-console -- --priority-queues 2 >> /tmp/bmv2.err 2>&1 &')
     
 
     orchestrate(nodes_dict, duration)
