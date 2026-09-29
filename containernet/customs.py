@@ -42,5 +42,7 @@ def orchestrate(nodes_dict, duration):
 
     nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 0" | simple_switch_CLI > /tmp/class')
     nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 1" | simple_switch_CLI >> /tmp/class')
+    nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 2" | simple_switch_CLI >> /tmp/class')
+    nodes_dict['s1'].cmd('echo "counter_read MyIngress.resultCounter 3" | simple_switch_CLI >> /tmp/class')
 
     return

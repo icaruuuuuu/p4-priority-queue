@@ -1,11 +1,10 @@
 [ml]
 model = "decision_tree"
-features = ["sport", "dport"]
+features = ["ipi", "frame_size", "window"]
 
 # Optional model parameters
 [ml.parameters]
 max_depth = 10
-
 
 [provision]
 links = [
