@@ -294,7 +294,7 @@ control MyIngress(inout headers hdr,
             }
 
 	    if (meta.result == 0) {
-		    standard_metadata.priority = 0;
+		standard_metadata.priority = 0;
 	    } else {
 	    	standard_metadata.priority = 1;
 	    }

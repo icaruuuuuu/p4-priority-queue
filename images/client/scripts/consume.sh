@@ -37,12 +37,7 @@ consume_file() {
 consume_video() {
     while true; do
         echo "[ $(date +"%Y-%m-%d %H:%M:%S.%6N") ] NEW FFMPEG INSTANCE" >> "$STREAM_LOG"
-        ffmpeg -readrate 3 -i "$STREAM_URL" -an -f null - -progress /dev/stdout 2>&1 | awk '/=/ {
-    cmd = "date +\"%Y-%m-%d %H:%M:%S.%^N\"";
-    cmd | getline ts;
-    close(cmd);
-    print "[" ts "] " $0; fflush();
-}' >> "$STREAM_LOG"
+        ffmpeg -readrate 2 -progress pipe:1 -nostats -i "$STREAM_URL" -an -f null - 2>/dev/null | while read -r line; do echo "$(date +%s), $line"; done | tee "$STREAM_LOG"
         sleep 1
     done
 }

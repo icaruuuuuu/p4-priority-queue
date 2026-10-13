@@ -95,8 +95,6 @@ struct metadata {
     parser_metadata_t    parser_metadata;
     flowID_t             flowID;
     bit<32> frame_size;
-    bit<16> totalLen;
-    bit<8> diffserv;
     bit<16> window;
     bit<2>  result;
 }
@@ -221,8 +219,6 @@ control MyIngress(inout headers hdr,
     table decision_tree {
         key = {
             meta.frame_size: range;
-            meta.totalLen: range;
-            meta.diffserv: range;
             meta.window: range;
         }
         actions = {
@@ -239,8 +235,6 @@ control MyIngress(inout headers hdr,
 
     action extract_features() {
         meta.frame_size = standard_metadata.packet_length;
-        meta.totalLen = hdr.ipv4.totalLen;
-        meta.diffserv = hdr.ipv4.diffserv;
         meta.window = hdr.tcp.window;
     }
 
@@ -275,11 +269,13 @@ control MyIngress(inout headers hdr,
 
                 resultCounter.count((bit<32>)meta.result);
             }
-            if (meta.result == 0) {
-                standard_metadata.priority = 0;
-            } else {
-                standard_metadata.priority = 1;
-            }
+
+	    if (meta.result == 0) {
+		standard_metadata.priority = 0;
+	    } else {
+	    	standard_metadata.priority = 1;
+	    }
+
             ipv4_lpm.apply();
         }
     }
