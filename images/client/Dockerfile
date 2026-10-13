@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     bash \
     curl \
     vlc \
+    ffmpeg \
     iperf3 \
     tcpdump \
     ethtool \

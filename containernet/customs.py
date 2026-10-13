@@ -35,8 +35,8 @@ def orchestrate(nodes_dict, duration):
     h2.cmd("service vsftpd start; iperf3 -sD; nginx -g 'daemon off;' &")
     h1.cmd("tcpdump -i h1-eth0 -s0 -w /tmp/dump-$(date +'%Y%m%d_%H%M%S').pcap &")
 
-    s1.cmd("tcpdump -i s1-eth0 -s0 -w /tmp/dump-bmv2-eth0-$(date +'%Y%m%d_%H%M%S').pcap & 2>>/tmp/bmv2.err")
-    s1.cmd("tcpdump -i s1-eth1 -s0 -w /tmp/dump-bmv2-eth1-$(date +'%Y%m%d_%H%M%S').pcap & 2>>/tmp/bmv2.err")
+    # s1.cmd("tcpdump -i s1-eth0 -s0 -w /tmp/dump-bmv2-eth0-$(date +'%Y%m%d_%H%M%S').pcap & 2>>/tmp/bmv2.err")
+    # s1.cmd("tcpdump -i s1-eth1 -s0 -w /tmp/dump-bmv2-eth1-$(date +'%Y%m%d_%H%M%S').pcap & 2>>/tmp/bmv2.err")
 
     h1.cmd(f"scripts/consume.sh {duration}")
 

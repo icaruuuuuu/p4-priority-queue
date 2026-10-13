@@ -94,8 +94,9 @@ struct metadata {
     ingress_metadata_t   ingress_metadata;
     parser_metadata_t    parser_metadata;
     flowID_t             flowID;
-    bit<48> ipi;
     bit<32> frame_size;
+    bit<16> totalLen;
+    bit<8> diffserv;
     bit<16> window;
     bit<2>  result;
 }
@@ -219,8 +220,9 @@ control MyIngress(inout headers hdr,
 
     table decision_tree {
         key = {
-            meta.ipi: range;
             meta.frame_size: range;
+            meta.totalLen: range;
+            meta.diffserv: range;
             meta.window: range;
         }
         actions = {
@@ -236,28 +238,9 @@ control MyIngress(inout headers hdr,
 /*********************/
 
     action extract_features() {
-        timestamp_t ipi = 0;
-        int<48> diff_ts = 0;
-
-        timestamp_t current_time = standard_metadata.ingress_global_timestamp;
-        timestamp_t last_packet_time = 0;
-
-        ipi_register.read(ipi, (bit<32>)meta.flowID);
-        lpt_register.read(last_packet_time, (bit<32>)meta.flowID);
-
-        if (last_packet_time == 0) {
-            last_packet_time = current_time;
-        } else {
-            /* IPI */
-            ipi = current_time - last_packet_time;
-            last_packet_time = current_time;
-        }
-
-        ipi_register.write((bit<32>)meta.flowID, ipi);
-        lpt_register.write((bit<32>)meta.flowID, last_packet_time);
-
-        meta.ipi = ipi;
         meta.frame_size = standard_metadata.packet_length;
+        meta.totalLen = hdr.ipv4.totalLen;
+        meta.diffserv = hdr.ipv4.diffserv;
         meta.window = hdr.tcp.window;
     }
 
@@ -292,13 +275,11 @@ control MyIngress(inout headers hdr,
 
                 resultCounter.count((bit<32>)meta.result);
             }
-
-	    if (meta.result == 0) {
-		standard_metadata.priority = 0;
-	    } else {
-	    	standard_metadata.priority = 1;
-	    }
-
+            if (meta.result == 0) {
+                standard_metadata.priority = 0;
+            } else {
+                standard_metadata.priority = 1;
+            }
             ipv4_lpm.apply();
         }
     }

@@ -11,7 +11,7 @@ FILE_URL="ftp://$SERVER/JihanGrandTheater.jpg"
 
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 LOG_DIR="/tmp"
-STREAM_LOG="$LOG_DIR/vlc-$TIMESTAMP.log"
+STREAM_LOG="$LOG_DIR/vid-$TIMESTAMP.log"
 WEB_LOG="$LOG_DIR/web-$TIMESTAMP.csv"
 FILE_LOG="$LOG_DIR/file-$TIMESTAMP.csv"
 IPERF_LOG="$LOG_DIR/iperf-$TIMESTAMP.json"
@@ -36,7 +36,13 @@ consume_file() {
 
 consume_video() {
     while true; do
-        cvlc -I dummy --no-audio --verbose=2 --vout=xcb_x11 --file-caching=5000 --network-caching=5000 "$STREAM_URL" vlc://quit >> "$STREAM_LOG" 2>&1
+        echo "[ $(date +"%Y-%m-%d %H:%M:%S.%6N") ] NEW FFMPEG INSTANCE" >> "$STREAM_LOG"
+        ffmpeg -readrate 3 -i "$STREAM_URL" -an -f null - -progress /dev/stdout 2>&1 | awk '/=/ {
+    cmd = "date +\"%Y-%m-%d %H:%M:%S.%^N\"";
+    cmd | getline ts;
+    close(cmd);
+    print "[" ts "] " $0; fflush();
+}' >> "$STREAM_LOG"
         sleep 1
     done
 }
