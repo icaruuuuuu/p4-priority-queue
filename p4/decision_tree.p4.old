@@ -293,11 +293,11 @@ control MyIngress(inout headers hdr,
                 resultCounter.count((bit<32>)meta.result);
             }
 
-	    if (meta.result == 0) {
-		standard_metadata.priority = 0;
-	    } else {
-	    	standard_metadata.priority = 1;
-	    }
+            if (meta.result == 0) {
+                standard_metadata.priority = 0;
+            } else {
+                standard_metadata.priority = 1;
+            }
 
             ipv4_lpm.apply();
         }

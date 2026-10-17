@@ -1,6 +1,6 @@
 [ml]
 model = "decision_tree"
-features = ["frame_size", "window",]
+features = ["window", "ipi", "frame_size", "tos"]
 
 # Optional model parameters
 [ml.parameters]

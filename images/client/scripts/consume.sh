@@ -20,8 +20,8 @@ consume_web() {
     echo "timestamp,http_status,time_total" > "$WEB_LOG"
     while true; do
 	TS=$(date +%s.%3N)
-        curl -so /dev/null "$WEB_URL" -w "$TS,%{http_code},%{time_total}\n" >> "$WEB_LOG" || true &
-        sleep 0.1
+        curl -so /dev/null "$WEB_URL" -w "$TS,%{http_code},%{time_total}\n" >> "$WEB_LOG" || true 
+        # sleep 0.1
     done
 }
 
@@ -29,21 +29,21 @@ consume_file() {
     echo "timestamp,time_total" > "$FILE_LOG"
     while true; do
 	TS=$(date +%s.%3N)
-        curl -so /dev/null -u "$FTP_USER:$FTP_PASS" "$FILE_URL" -w "$TS,%{time_total}\n" >> "$FILE_LOG" || true &
-        sleep 0.1
+        curl -so /dev/null -u "$FTP_USER:$FTP_PASS" "$FILE_URL" -w "$TS,%{time_total}\n" >> "$FILE_LOG" || true
+        # sleep 1
     done
 }
 
 consume_video() {
     while true; do
         echo "[ $(date +"%Y-%m-%d %H:%M:%S.%6N") ] NEW FFMPEG INSTANCE" >> "$STREAM_LOG"
-        ffmpeg -readrate 2 -progress pipe:1 -nostats -i "$STREAM_URL" -an -f null - 2>/dev/null | while read -r line; do echo "$(date +%s), $line"; done | tee "$STREAM_LOG"
+        ffmpeg -readrate 2 -progress pipe:1 -nostats -i "$STREAM_URL" -an -f null - 2>/dev/null | while read -r line; do echo "$(date +%s), $line"; done | tee -a "$STREAM_LOG"
         sleep 1
     done
 }
 
 consume_iperf() {
-	iperf3 -c $SERVER -t $DURATION -i 1 --json --logfile "$IPERF_LOG" -l 500
+	iperf3 -c $SERVER -t $DURATION -i 1 --json --logfile "$IPERF_LOG" -l 500 -S 0x08
 }
 
 cleanup() {
